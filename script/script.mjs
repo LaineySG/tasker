@@ -24,7 +24,7 @@ function removeList(id = -1) { //Remove a list
     }
 }
 
-function addNewTask(id = -1, listid = -1) { //Add a new task to a list
+function addNewTask(id = -1, listid = -1, prevTask) { //Add a new task to a list
     //Get parameters from user input
     new_task_name = document.getElementById("add-task-name-input").value
     new_task_prio = document.getElementById("add-task-priority-input").value
@@ -38,19 +38,25 @@ function addNewTask(id = -1, listid = -1) { //Add a new task to a list
     new_task_color = document.getElementById("add-task-color-input").value
     is_task = document.getElementById("task-bool").checked
     if (is_task && listid == -1) { //if its a task and list ID isn't given, set the list and ID to the to-do list ID
-        console.log("1")
         new_task_list_id = task_list.find(list => list.name == 'to-do list').id
         new_task_list = 'to-do list'
     } else if (listid == -1) {
-        console.log("2")
         new_task_list_id = document.getElementById("add-task-list-input").value
         new_task_list = task_list.find(list => list.id == new_task_list_id).name
-    } else {// list ID is given
-        console.log("3")
+    } else {// list ID is given - in case of moving item
         new_task_list_id = listid
-        new_task_list = task_list.find(list => list.id == listid).name
+        new_task_list = prevTask.list
+        new_task_name = prevTask.name
+        new_task_prio = prevTask.priority
+        new_task_date = prevTask.date
+        new_task_recur = prevTask.recur_days
+        new_task_completed_date = prevTask.completed_date
+        new_task_note = prevTask.note
+        is_completed = prevTask.is_completed
+        is_recurring = prevTask.is_recurring
+        is_persistent = prevTask.is_persistent
+        new_task_color = prevTask.color
     }
-    console.log("New task lsit: " + new_task_list)
 
     if (id == -1) { //Generate ID if not provided. Otherwise (in case of modification) set ID to provided ID
         random_id = uid(16)
@@ -104,7 +110,6 @@ function removeTask(id = -1,listid = -1) { //Remove a task from a list
     } else {
         var listidx = task_list.findIndex(list => list.id == listid); //get idx of list
         var taskidx = task_list[listidx].tasks.findIndex(task => task.id == id); //get idx of task
-        console.log("removal log " + listidx + " "  + taskidx)
         task_list[listidx].tasks.splice(taskidx,1) //remove that item
     }
 
@@ -134,7 +139,7 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                         TDLItem.title += `${task.note}. ${task.is_recurring ? "recurring every: "+task.recur_days+" days." : ""} - ${task.is_persistent ? "Persistent" : ""} (${task.id})` //update for context menu on hover. Esp. comments
                         
                         TDLItem.classList = "hover:border-2 hover:rounded-md hover:bg-pink-400 hover:border-pink-500 flex justify-center"; // Use flex container to align items horizontally
-                        TDLItem.id = `${task.id}-list-item-div`
+                        TDLItem.id = `${task.id}-TDL-item-div`
                         const priocircle = document.createElement('div');
                         priocircle.innerHTML = `<span>${task.priority}</span>`;
                         if (task.priority > 7) {
@@ -150,6 +155,7 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                         const TDLText = document.createElement('span'); // Use a <span> for the text content
                         TDLText.classList = 'pointer-events-none'
                         TDLText.textContent = task.name;
+                        TDLText.style.color = task.color;
                         TDLItem.appendChild(TDLText);
                     
                         TDLElement.appendChild(TDLItem);

@@ -1,12 +1,10 @@
 function getItemById(inputID) {//Take in ID, return task or list object.
     for (const list of task_list) { //for each list in array
         if (inputID == list.id) { //it's a list
-            console.log("it's a baby list! - " + list)
             return list;
         }
         for (const task of list.tasks) { //for each task in that list
             if (inputID == task.id) { //it's a task
-                console.log("it's a baby task! - " + task)
                 return task;
             }
         }

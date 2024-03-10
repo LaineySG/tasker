@@ -169,12 +169,17 @@ containerArray.forEach((container, index) => {//For each item in both containers
         }
     });
     container.addEventListener('dragenter', (event) => {//Listens for drag-enter events on all items in containers, prevents default.
-        event.preventDefault();
+        if (!event.target.id.endsWith('TDL-item-div')) {
+            event.preventDefault();
+        }
     });
     container.addEventListener('dragover', (event) => {//Listens for drag-over events on all items in containers, prevents default.
-        event.preventDefault();
+        if (!event.target.id.endsWith('TDL-item-div')) {
+            event.preventDefault();
+        }
     });
     container.addEventListener('drop', (event) => {//Listens for drop events on all items in containers, handles dropping of items.
+        //if (event.target.id.endsWith('TDL'))
         event.preventDefault();
         dropitemIDN = event.dataTransfer.getData("text")
         itemDropped = task_list.find(list => list.id == dropitemIDN)
@@ -190,17 +195,24 @@ containerArray.forEach((container, index) => {//For each item in both containers
                 //First we get the ID of the list it was dropped on. We change the task's listid parent to the new list ID
                 droppedlistid = event.target.id.split("-")
                 droppedlistIDN = droppedlistid[0]
-                console.log("task changed from list: " +  task.listid + " , " + task.list)
-                previouslistID = task.listid
-                task.listid = droppedlistIDN
-                var taskobj = task_list.find(list => list.id == task.listid) //set the parent list's name
-                task.list = taskobj.name
-                console.log("task changed to list: " +  task.listid + " , " + task.list)
-
-                //Then we remove the task from the parent's ID list and add it to the new list
-                tempTask = task
-                removeTask(task.id, previouslistID)
-                addNewTask(task.id, task.listid)
+                
+                if (droppedlistIDN != "todolist") { //dont drag/drop if it's an item going to the task list
+                    item = getItemById(droppedlistIDN)
+                    if (item.listid != null) { //if it's dropped on an item just get that item's parent
+                        droppedlistIDN = item.listid
+                    }
+                    console.log("task changed from list: " +  task.listid + " , " + task.list)
+                    previouslistID = task.listid
+                    task.listid = droppedlistIDN
+                    var taskobj = task_list.find(list => list.id == task.listid) //set the parent list's name
+                    task.list = taskobj.name
+                    console.log("task changed to list: " +  task.listid + " , " + task.list)
+    
+                    //Then we remove the task from the parent's ID list and add it to the new list
+                    tempTask = task
+                    removeTask(task.id, previouslistID)
+                    addNewTask(task.id, task.listid, task)
+                }
                 }
             });
             updateUI(false);
@@ -208,7 +220,7 @@ containerArray.forEach((container, index) => {//For each item in both containers
     });
     container.addEventListener('click', (event) => {//Listens for click events on all items in container, Handles sort buttons and modifications.
         const target = event.target;
-        console.log(target.id)
+        console.log(target.id + "Clicked!")
         // Check if the clicked element has the expected class or ID
         if (target.classList.contains('sort-btn') || target.id.endsWith('sort-btn')) {//Handles sort button clicks. Sorts the list of tasks.
             // Extract list and type information from the clicked element
