@@ -10,58 +10,114 @@
     <title>Tasker</title>
 </head>
 <body>
-    <div class="w-full content-center p-10" id="main-div">
+    <div class="w-full content-center p-10 bg-pink-100" id="main-div">
         <div class="rounded-md bg-pink-200 p-3" id="content-div">
 
-            <div class="flex" id="form-flex-div">
-                <div class="text-center p-3 bg-pink-300 w-1/3 text-white font-bold mx-auto rounded-md border-2 border-pink-500" id="pomo-div">
-                    Pomodoro<br>
-                    <input class="m-2 text-gray-500 text-3xl mx-auto text-center p-1 rounded-md bg-pink-300" id="timer" value="5:00"><br>
+            <form id="form-div">
+                <div class="flex" id="form-flex-div">
+                    <div class="text-center p-2 m-1 bg-pink-300 w-full sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4 text-white font-bold rounded-md border-2 border-pink-500" id="add-task-div">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <span class="m-2">Is Task? </span>
+                            <input type="checkbox" checked="checked" value="" class="sr-only peer" id="task-bool">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"></div>
+                        </label><br>
+                        
+                        <label class="text-white font-bold border-gray-400">Name: </label><input class="m-2 text-gray-500 p-1 rounded-md bg-cyan-100" id="add-task-name-input"><br>
+                        <label id='add-task-date-label'>Due Date: <input type="date" class="m-2 p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-date-input"><br></label>
+                        <label id="priority-label">Priority: </label><input type="number" value="5" min="0" max="11" class="m-2  p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-priority-input"><br>
+                        <label id="color-label">Color: </label><input type="color" value="#ffffff" class="m-2  p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-color-input"><br>
+                        
+                        <label id="add-task-list-label" style="display:none">List: <select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="add-task-list-input"></select><br></label>
+                        
+                        <label class="inline-flex items-center cursor-pointer">
+                            <span class="m-2">Completed? </span>
+                            <input type="checkbox" value="" class="sr-only peer" id="completed-bool">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"></div>
+                            <br>
+                        </label>
+                        <span id="date-completed-span" style="display:none"><label>Date Completed: </label><input type="date" class="m-2 p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-completed-input"></span>
+                        
+
+                        <label class="inline-flex items-center cursor-pointer" id="recurring-label">
+                            <span class="m-2">Recurring? </span>
+                            <input type="checkbox" value="" class="sr-only peer" id="recurring-bool">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"></div>
+                        <br></label>
+                        <span id="recurring-period-span" style="display:none"><label>Recur Every : </label><input type="number" min="1" max="50000" class="m-2 p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-recur-input"> Days<br></span>
+                        
+                        <label class="inline-flex items-center cursor-pointer" id="persistent-label">
+                            <span class="m-2">Persistent? </span>
+                            <input type="checkbox" value="" class="sr-only peer" id="persistent-bool">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"></div>
+                        </label>
+
+                        <label><br id="buggyid">Notes: </label><input class="m-2 text-gray-500 p-1 rounded-md bg-cyan-100" id="add-task-comment-input"><br>
+                        
+                        <button type='button' id="add-task-btn" class="text-center bg-cyan-200 text-gray-500 font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-cyan-300">Add Task</button>
+                        <button type='button' id="save-changes-task-btn" hidden="true" class="text-center bg-cyan-200 text-gray-500 font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-cyan-300">Save Changes</button>
+                        <button type='button' id="cancel-changes-task-btn" hidden="true" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Cancel</button>
+                        </div>
+                    
+                    <div class="text-center p-2 m-1 bg-pink-300 w-full sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="rem-task-div">
+                        <label>List: </label><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="rem-task-list-input"></select><br>
+                        <label>Task: </label><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="rem-task-name-input"></select><br>
+                        <button type='button' id="rem-task-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Remove Task</button>
+                        <br><hr><br>
+                        <label class="text-white font-bold border-gray-400">List: </label><input class="m-2 text-gray-500 p-1 rounded-md bg-cyan-100" id="add-list-name-input">
+                        
+                        <button type='button' id="add-list-btn" class="text-center bg-cyan-200 text-gray-500 font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-cyan-300">Add List</button><br>
+                        <button type='button' id="save-changes-list-btn" hidden="true" class=" text-center bg-cyan-200 text-gray-500 font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-cyan-300">Save Changes</button>
+                        <button type='button' id="cancel-changes-list-btn" hidden="true" class=" text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Cancel</button>
+                        <br><hr>
+                        <br><label class="text-white font-bold border-gray-400">List: </label><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="rem-list-name-input"></select>
+                        <button type='button' id="rem-list-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Remove List</button>
+                    
+                    </div>
+                    
+                    <div class="text-center p-2 m-1 bg-pink-300 w-full sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="todolist-div">
+                        <div class="flex justify-center m-1" id="todolist-flex-div">
+                            <button type="button" id="todo-left-btn" class="w-5 h-5 mr-auto hover:bg-pink-500 hover:text-gray-400 text-center justify-self-start self-center ml-4 m-1 bg-pink-400 text-white font-bold rounded-full border-2 border-pink-500 flex justify-center items-center my-auto">
+                            <span class="pointer-events-none text-xs"><i class="pointer-events-none fa-solid fa-chevron-left" aria-hidden="true"></i></span></button>
+                            
+                            <h2 id="todolist-container-title" class="text-center font-bold inline">To-Do List</h2>
+                            <button type="button" id="todolist-alpha-sort-btn" class="w-5 h-5 hover:bg-pink-500 hover:text-gray-400 text-center justify-self-end self-center ml-4 m-1 bg-pink-400 text-white font-bold rounded-full border-2 border-pink-500 flex justify-center items-center my-auto">
+                            <span class="pointer-events-none text-xs"><i class="pointer-events-none fa-solid fa-a" aria-hidden="true"></i></span></button>
+                            <button type="button" id="todolist-rate-sort-btn" class="w-5 h-5 hover:bg-pink-500 hover:text-gray-400 text-center justify-self-end self-center m-1 ml-0 bg-pink-400 text-white font-bold rounded-full border-2 border-pink-500 flex justify-center items-center my-auto">
+                            <span class="pointer-events-none text-xs"><i class="pointer-events-none fa-solid fa-star" aria-hidden="true"></i></span></button>
+                            <button type="button" id="todolist-date-sort-btn" class="w-5 h-5 hover:bg-pink-500 hover:text-gray-400 text-center justify-self-end self-center m-1 ml-0 bg-pink-400 text-white font-bold rounded-full border-2 border-pink-500 flex justify-center items-center my-auto">
+                            <span class="text-xs pointer-events-none "><i class="pointer-events-none fa-solid fa-clock" aria-hidden="true"></i></span></button>
+
+                            <button type="button" id="todo-right-btn" class="w-5 h-5 ml-auto hover:bg-pink-500 hover:text-gray-400 text-center justify-self-end self-center ml-4 m-1 bg-pink-400 text-white font-bold rounded-full border-2 border-pink-500 flex justify-center items-center my-auto">
+                            <span class="pointer-events-none text-xs"><i class="pointer-events-none fa-solid fa-chevron-right" aria-hidden="true"></i></span></button>
+                             
+
+                        </div><hr>
+                        <div id="to-do-list-div" class="text-center flex justify-around gap-1 flex-wrap"></div>  
+                    </div>
+                    <div class="text-center p-2 m-1 bg-pink-300 w-full sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="rem-list-div">
+                        Pomodoro<br>
+                    <input class="m-2 w-5/6 text-gray-500 text-3xl mx-auto text-center p-1 rounded-md bg-pink-300" id="timer" value="5:00"><br>
                     <button type="button" id="start-timer-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500"><i class="fa-solid fa-play"></i></button>
                     <button type="button" id="pause-timer-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500"><i class="fa-solid fa-pause"></i></button>
-                </div> 
-                <div class="text-center p-3 bg-pink-300 w-1/3 text-white font-bold mx-auto rounded-md border-2 border-pink-500" id="pomo-div">
-                    How to use the Pomodoro Technique:<br>
+                    <br><br><br>How to use the Pomodoro Technique:<br>
                     1) Choose a task to work on.<br>
                     2) Set a 25 minute timer.<br>
                     3) Work until the timer ends.<br>
                     4) Take a 5 minute break.<br>
                     5) Every 4 pomodoros, take a 15-30 minute break.
-                </div>
-            </div>
-
-            <form id="form-div">
-                <div class="flex" id="form-flex-div">
-                    <div class="text-center bg-pink-300 w-full m-1 sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="add-task-div">
-                        <label class="text-white font-bold border-gray-400">Name: </label><br><input class="m-2 text-gray-500 p-1 rounded-md bg-cyan-100" id="add-task-name-input"><br>
-                        <label>Date: </label><br><input type="date" value="2024-03-06" class="m-2 p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-date-input"><br>
-                        <label>Priority: </label><br><input type="number" value="5" min="0" max="11" class="m-2  p-1 rounded-md text-gray-500 bg-cyan-100" id="add-task-priority-input"><br>
-                        <label>List: </label><br><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="add-task-list-input"></select><br>
-                        <button type='button' id="add-task-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Add Task</button>
-                    </div>
-                    
-                    <div class="text-center bg-pink-300 w-full m-1  sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="rem-task-div">
-                        <label>List: </label><br><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="rem-task-list-input"></select><br>
-                        <label>Task: </label><br><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="rem-task-name-input"></select><br>
-                        <button type='button' id="rem-task-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Remove Task</button>
-                    </div>
-                    
-                    <div class="text-center bg-pink-300 w-full m-1  sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="add-list-div">
-                        <label class="text-white font-bold border-gray-400">Name: </label><br><input class="m-2 text-gray-500 p-1 rounded-md bg-cyan-100" id="add-list-name-input"><br>
-                        <button type='button' id="add-list-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Add List</button>
-                    </div>
-                    
-                    <div class="text-center bg-pink-300 w-full m-1 sm:w-1/2 md:w-1/4 lg:w-1/4 xl:w-1/4  text-white font-bold rounded-md border-2 border-pink-500" id="rem-list-div">
-                        <label class="text-white font-bold border-gray-400">List: </label><br><select class="m-2  p-1 rounded-md bg-cyan-100  text-gray-500 " id="rem-list-name-input"></select><br>
-                        <button type='button' id="rem-list-btn" class="text-center bg-pink-400 text-white font-bold rounded-md pl-3 pr-3 pt-0 pb-0 m-2 border-2 border-pink-500">Remove List</button>
+                        <br>
                     </div>
                 </div>
             </form>
-            <div id="lists-container" class="flex justify-around gap-1 flex-wrap">
+            <div id="lists-container" class="text-center flex justify-around gap-1 flex-wrap"  ondragover="allowDrop(event)">
                 <!--lists go here-->
             </div>
         </div>
     </div>
-    <script src="script/script.js"></script>
+    <script src="script/utils.js"></script>
+    <script src="script/pomo.js"></script>
+    <script src="script/script.mjs"></script>
+    <script src="script/eventListeners.js"></script>
+    <script src="script/init.js"></script>
 </body>
 </html>

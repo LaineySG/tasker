@@ -1,5 +1,9 @@
 {
+  "type": "module",
   "dependencies": {
-    "js-cookie": "^3.0.5"
+    "js-cookie": "^3.0.5",
+    "requirejs": "^2.3.6",
+    "uid": "^2.0.2",
+    "type": "module"
   }
 }
