@@ -309,7 +309,7 @@ containerArray.forEach((container, index) => {//For each item in both containers
 
 
         } else if (target.id.endsWith('TDL-completed-checkbox')) {
-            //mark task completed AKA delete it unless it's recurring or persistent
+            //mark task completed AKA delete it unless it's recurring
             listitemid = target.id.split("-")
             listitemIDN = listitemid[0]
             item = getItemById(listitemIDN)
@@ -317,8 +317,11 @@ containerArray.forEach((container, index) => {//For each item in both containers
             if (document.getElementById(target.id).checked == true) {
                 timer = setTimeout(DeleteItem,5000) 
                 function DeleteItem(){
-                    if (document.getElementById(target.id).checked == true) {
+                    if (document.getElementById(target.id).checked == true && !item.is_recurring) {
                         removeTask(item.id, item.listid)
+                        updateUI(false)
+                    } else if (item.is_recurring) {
+                        item.is_completed = true
                         updateUI(false)
                     }
                 } 
