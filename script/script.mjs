@@ -126,13 +126,147 @@ function updateUI(Listchange=true) { //Update the lists and tasks
         if (list.id == task_list.find(list => list.name == 'to-do list').id) { //if the list in question is the to-do list specifically, we will set that page here.
             if (currentTDLPage == 0) {
                 //set as to-do list (default)
-                document.getElementById("todolist-container-title").innerHTML = 'To-Do List'
+                document.getElementById("todolist-container-title").innerHTML = "Today's To-Do List"
                 const TDLElement = document.createElement('ul');
-                TDLElement.classList = "text-center" 
+                TDLElement.classList = "text-center w-full" 
                 
                 list.tasks.forEach(task => { //for each task in the to-do list, create div and content area.
-                    if (task.date == (new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"}))) {
+                    if ((task.date == (new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) || task.is_persistent) && !task.is_completed) {
+                        //If it's the same date or it's persistent, and not completed, it goes here.
+                        const TDLItem = document.createElement('li');
+
+                        TDLItem.title = `${task.name} (${task.priority}) - ${task.is_completed ?  ("Completed: " + task.completed_date) : ("Due "+task.date)}.` 
+                        TDLItem.title += `${task.note}. ${task.is_recurring ? "recurring every: "+task.recur_days+" days." : ""} - ${task.is_persistent ? "Persistent" : ""} (${task.id})` //update for context menu on hover. Esp. comments
                         
+                        TDLItem.classList = "hover:border-2 hover:rounded-md hover:bg-pink-400 hover:border-pink-500 flex justify-center"; // Use flex container to align items horizontally
+                        TDLItem.id = `${task.id}-TDL-item-div`
+                        const priocircle = document.createElement('div');
+                        priocircle.innerHTML = `<span>${task.priority}</span>`;
+                        if (task.priority > 7) {
+                            priocircle.classList = "bg-red-500"; // Add flex utilities for centering
+                        } else if (task.priority > 3) {
+                            priocircle.classList = "bg-orange-500"; // Add mr-2 for margin-right
+                        } else {
+                            priocircle.classList = "bg-green-500"; // Add mr-2 for margin-right
+                        }
+                        priocircle.classList += " w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                        TDLItem.appendChild(priocircle);
+                        const TDLText = document.createElement('span'); // Use a <span> for the text content
+                        TDLText.classList = 'pointer-events-none mr-3 '
+                        TDLText.textContent = task.name;
+                        TDLText.style.color = task.color;
+                        TDLItem.appendChild(TDLText);
+
+                        if (task.is_persistent) {
+                            const persistentCircle = document.createElement('div');
+                            persistentCircle.innerHTML = `<span>P</span>`;
+                            persistentCircle.classList += "bg-violet-400 w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                            TDLItem.appendChild(persistentCircle);
+                        }
+                        if (task.is_recurring) {
+                            const persistentCircle = document.createElement('div');
+                            persistentCircle.innerHTML = `<span>R${task.recur_days}</span>`;
+                            persistentCircle.classList += "bg-rose-400 text-xs w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                            TDLItem.appendChild(persistentCircle);
+                        }
+
+                        const completedlabel = document.createElement('label') //add completed checkbox
+                        const completedCheck = document.createElement('input')
+                        completedCheck.type = "checkbox"
+                        completedCheck.checked = false
+                        completedCheck.classList = "sr-only peer"
+                        completedCheck.id =  `${task.id}-TDL-completed-checkbox`
+                        const completedCheckDiv = document.createElement('div')
+                        completedCheckDiv.classList = "relative w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-3 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"
+                        completedlabel.appendChild(completedCheck)
+                        completedlabel.appendChild(completedCheckDiv)
+                        completedlabel.classList = 'ml-auto'
+                        TDLItem.appendChild(completedlabel)
+                        
+
+                        TDLElement.appendChild(TDLItem);
+                        document.getElementById('to-do-list-div').appendChild(TDLElement)
+                    }
+                });
+            } else if (currentTDLPage == 1) {
+                //set as upcoming to-do
+                document.getElementById("todolist-container-title").innerHTML = 'Upcoming'
+                const TDLElement = document.createElement('ul');
+                TDLElement.classList = "text-center w-full" 
+                
+                list.tasks.forEach(task => { //for each task in the to-do list, create div and content area.
+                    if (task.date > (new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) && !task.is_completed) {
+                        //If the date is greater and it's not completed, it goes here.
+                        const TDLItem = document.createElement('li');
+
+                        TDLItem.title = `${task.name} (${task.priority}) - ${task.is_completed ?  ("Completed: " + task.completed_date) : ("Due "+task.date)}.` 
+                        TDLItem.title += `${task.note}. ${task.is_recurring ? "recurring every: "+task.recur_days+" days." : ""} - ${task.is_persistent ? "Persistent" : ""} (${task.id})` //update for context menu on hover. Esp. comments
+                        
+                        TDLItem.classList = "hover:border-2 hover:rounded-md hover:bg-pink-400 hover:border-pink-500 flex justify-center"; // Use flex container to align items horizontally
+                        TDLItem.id = `${task.id}-TDL-item-div`
+                        const priocircle = document.createElement('div');
+                        priocircle.innerHTML = `<span>${task.priority}</span>`;
+                        if (task.priority > 7) {
+                            priocircle.classList = "bg-red-500";
+                        } else if (task.priority > 3) {
+                            priocircle.classList = "bg-orange-500";
+                        } else {
+                            priocircle.classList = "bg-green-500";
+                        }
+                        priocircle.classList += " w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                        TDLItem.appendChild(priocircle);
+                    
+                        const TDLText = document.createElement('span');
+                        TDLText.classList = 'pointer-events-none mr-3'
+                        TDLText.textContent = task.name + " - ";
+                        TDLText.style.color = task.color;
+                        TDLItem.appendChild(TDLText);
+                        
+                        
+                        const TDLTextDate = document.createElement('span');
+                        TDLTextDate.classList = 'pointer-events-none mr-3 text-gray-500 font-normal italic'
+                        TDLTextDate.textContent = task.date;
+                        TDLItem.appendChild(TDLTextDate);
+                    
+                        if (task.is_persistent) { //add persistence circle
+                            const persistentCircle = document.createElement('div');
+                            persistentCircle.innerHTML = `<span>P</span>`;
+                            persistentCircle.classList += "bg-violet-400 w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                            TDLItem.appendChild(persistentCircle);
+                        }
+                        if (task.is_recurring) { //add recurring circle
+                            const persistentCircle = document.createElement('div');
+                            persistentCircle.innerHTML = `<span>R${task.recur_days}</span>`;
+                            persistentCircle.classList += "bg-rose-400 text-xs w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                            TDLItem.appendChild(persistentCircle);
+                        }
+
+                        const completedlabel = document.createElement('label') //add completed checkbox
+                        const completedCheck = document.createElement('input')
+                        completedCheck.type = "checkbox"
+                        completedCheck.checked = false
+                        completedCheck.classList = "sr-only peer"
+                        completedCheck.id =  `${task.id}-TDL-completed-checkbox`
+                        const completedCheckDiv = document.createElement('div')
+                        completedCheckDiv.classList = "relative w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-3 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"
+                        completedlabel.appendChild(completedCheck)
+                        completedlabel.appendChild(completedCheckDiv)
+                        completedlabel.classList = 'ml-auto'
+                        TDLItem.appendChild(completedlabel)
+
+                        TDLElement.appendChild(TDLItem);
+                        document.getElementById('to-do-list-div').appendChild(TDLElement)
+                    }
+                });
+            } else if (currentTDLPage == 2) {
+                //set as recurring to-do
+                document.getElementById("todolist-container-title").innerHTML = 'Recurring'
+                const TDLElement = document.createElement('ul');
+                TDLElement.classList = "text-center w-full" 
+                
+                list.tasks.forEach(task => { //for each task in the to-do list, create div and content area.
+                    if (task.is_recurring) {
+                        //If task recurs it goes here.
                         const TDLItem = document.createElement('li');
 
                         TDLItem.title = `${task.name} (${task.priority}) - ${task.is_completed ?  ("Completed: " + task.completed_date) : ("Due "+task.date)}.` 
@@ -153,24 +287,52 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                         TDLItem.appendChild(priocircle);
                     
                         const TDLText = document.createElement('span'); // Use a <span> for the text content
-                        TDLText.classList = 'pointer-events-none'
+                        TDLText.classList = 'pointer-events-none mr-3'
                         TDLText.textContent = task.name;
                         TDLText.style.color = task.color;
                         TDLItem.appendChild(TDLText);
                     
+                        if (task.is_persistent) { //add persistence circle
+                            const persistentCircle = document.createElement('div');
+                            persistentCircle.innerHTML = `<span>P</span>`;
+                            persistentCircle.classList += "bg-violet-400 w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                            TDLItem.appendChild(persistentCircle);
+                        }
+                        if (task.is_recurring) { //add recurring circle
+                            const persistentCircle = document.createElement('div');
+                            persistentCircle.innerHTML = `<span>R${task.recur_days}</span>`;
+                            persistentCircle.classList += "bg-rose-400 text-xs w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
+                            TDLItem.appendChild(persistentCircle);
+
+                            
+                            nextDate = (new Date(task.date)).setDate((new Date(task.date)).getDate() + parseInt(task.recur_days)+1); //add 1 so it works
+                            if (nextDate > new Date().setDate((new Date(task.date)).getDate())) { //if date is after today
+                                const TDLNextDate = document.createElement('span');
+                                TDLNextDate.classList = 'pointer-events-none mr-3 text-gray-500 font-normal italic'
+                                TDLNextDate.textContent = new Date(nextDate).toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})
+                                TDLItem.appendChild(TDLNextDate);
+                            } else { //otherwise date is today
+                                task.date = nextDate()
+                                updateUI(false);
+                            }
+                        }
+                        
+                        const deleteRecurring = document.createElement('button') //add delete button
+                        deleteRecurring.id = `${task.id}-TDL-delete-btn`
+                        deleteRecurring.classList = 'ml-auto text-center bg-pink-400 text-white font-bold rounded-md p-0.5 mb-0.5 pl-2 pr-2 text-xs border-2 border-pink-500'
+                        deleteRecurring.innerHTML = 'X'
+                        deleteRecurring.type = 'button'
+                        TDLItem.appendChild(deleteRecurring)
+
+                        
                         TDLElement.appendChild(TDLItem);
                         document.getElementById('to-do-list-div').appendChild(TDLElement)
                     }
                 });
-            } else if (currentTDLPage == 1) {
-                //set as upcoming to-do
-                document.getElementById("todolist-container-title").innerHTML = 'Upcoming'
-            } else if (currentTDLPage == 2) {
-                //set as recurring to-do
-                document.getElementById("todolist-container-title").innerHTML = 'Recurring'
             } else { //== 3 
                 //set as stats/suggestions
                 document.getElementById("todolist-container-title").innerHTML = 'Statistics'
+                //do later
             }
             
         return
@@ -313,9 +475,9 @@ function setModifyStateTask(task) { //When a task is selected, fill in the form 
     document.getElementById("add-task-recur-input").value  = task.recur_days
     document.getElementById("add-task-completed-input").value  = task.completed_date
     document.getElementById("add-task-comment-input").value = task.note
-    document.getElementById("completed-bool").value = task.is_completed
     document.getElementById("rem-task-list-input").label = task.list
     document.getElementById("rem-task-list-input").value = task.listid
+    document.getElementById("completed-bool").checked = task.is_completed
     if (!task.color) {
         document.getElementById("add-task-color-input").value = "#FFFFFF"
     } else {
@@ -327,8 +489,7 @@ function setModifyStateTask(task) { //When a task is selected, fill in the form 
     //todo-list specifics
     document.getElementById("add-task-recur-input").value = task.recur_days
     document.getElementById("add-task-date-input").value = task.date
-    document.getElementById("recurring-bool").value = task.is_recurring
-    document.getElementById("persistent-bool").value = task.is_persistent
+    
     
     //Show the save changes/cancel changes button, hide the 'add task' button
     document.getElementById("add-task-btn").hidden = true;
@@ -341,8 +502,6 @@ function setModifyStateTask(task) { //When a task is selected, fill in the form 
     const recurringswitched = document.getElementById('recurring-bool');
     const isTaskSwitched = document.getElementById('task-bool');
     if (task.listid == task_list.find(list => list.name == 'to-do list').id) {
-        completedswitched.checked = false //sets completed to false
-        recurringswitched.checked = false //sets recurring to false
         isTaskSwitched.checked = true //sets task? to true
         document.getElementById("priority-label").innerHTML = "Priority: "
         document.getElementById("persistent-bool").checked = false //sets persistent to false
@@ -356,7 +515,6 @@ function setModifyStateTask(task) { //When a task is selected, fill in the form 
 
     } else {
         document.getElementById("priority-label").innerHTML = "Rating: "
-        completedswitched.checked = true //sets completed to true
         isTaskSwitched.checked = false //sets task? to true
         document.getElementById("date-completed-span").style.display = "block"; //for completed
         document.getElementById('recurring-period-span').style.display = "none";//for recurring
@@ -366,6 +524,25 @@ function setModifyStateTask(task) { //When a task is selected, fill in the form 
         document.getElementById('add-task-date-label').style.display = "none"; //hides due date
         document.getElementById('add-task-list-label').style.display = "inline"; //Shows list option 
     }
+
+    //These update the booleans after resetting them above.
+    if (task.is_completed) {
+        document.getElementById("completed-bool").value = task.is_completed
+        switch_completed() //have to manually call this because the event listener doesn't see changing the value as an event.
+    } else {
+        document.getElementById("completed-bool").value = task.is_completed
+        switch_completed() //have to manually call this because the event listener doesn't see changing the value as an event.
+    }
+    if (task.is_recurring) {
+        document.getElementById("recurring-bool").checked = task.is_recurring
+        switch_recurring() //have to manually call this because the event listener doesn't see changing the value as an event.
+    } else {
+        document.getElementById("recurring-bool").checked = task.is_recurring
+        switch_recurring() //have to manually call this because the event listener doesn't see changing the value as an event.
+    }
+
+
+    document.getElementById("persistent-bool").checked = task.is_persistent
 
     updateUI(false); //Update the UI to reflect the modifications
     
@@ -440,8 +617,11 @@ function setTDLPage(pageNum) { //Set the page for the To-Do-List selector
 
 
 //add AI? - unlikely
-//Make tasks drag&drop
 
-//to-do-list, upcoming-to-do, recurring-to-do, stats/suggestions, swap between them with little arrows.
+
 //Pop-up info box with nicer formatting
-//add colors
+
+//All time tasks (subtracting any tasks that are deleted)
+//All time tasks marked completed 
+//Tasks that lapse (due on a day and failed)
+//Persistent tasks that are being ignored

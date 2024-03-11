@@ -79,8 +79,7 @@ timerPaused.addEventListener('click', () => {//Stop timer clicked
     timerPause();
 });
 
-const completedswitched = document.getElementById('completed-bool');
-completedswitched.addEventListener('change', () => {//Completed switch value changed. Handles some minor UI changes for display.
+function switch_completed() { //lets me call this when modifying tasks
     if (completedswitched.checked)  {
         document.getElementById("date-completed-span").style.display = "block";
         if (!isTaskSwitched.checked) {
@@ -92,15 +91,24 @@ completedswitched.addEventListener('change', () => {//Completed switch value cha
             document.getElementById('buggyid').style.display = "block"; //shows buggy br
         }
     }
+}
+
+const completedswitched = document.getElementById('completed-bool');
+completedswitched.addEventListener('change', () => {//Completed switch value changed. Handles some minor UI changes for display.
+    switch_completed()
 });
 
-const recurringswitched = document.getElementById('recurring-bool');
-recurringswitched.addEventListener('change', () => {//Recurring switch value changed. Handles minor UI changes for display
+function switch_recurring() { //lets me call this when modifying tasks
     if (recurringswitched.checked) {
         document.getElementById("recurring-period-span").style.display = "block";
     } else {
         document.getElementById("recurring-period-span").style.display = "none";
     }
+}
+
+const recurringswitched = document.getElementById('recurring-bool');
+recurringswitched.addEventListener('change', () => {//Recurring switch value changed. Handles minor UI changes for display
+    switch_recurring()
 });
 
 const todo_right_btn = document.getElementById('todo-right-btn');
@@ -110,6 +118,7 @@ todo_right_btn.addEventListener('click', () => {//Todo right button clicked, cha
         currentTDLPage = 0
     }
     setTDLPage(currentTDLPage)
+    updateUI(false)
     //0 to-do-list, 1 upcoming-to-do, 2 recurring-to-do, 3 stats/suggestions
 });
 const todo_left_btn = document.getElementById('todo-left-btn');
@@ -119,7 +128,7 @@ todo_left_btn.addEventListener('click', () => {//Todo left button clicked, chang
         currentTDLPage = 3
     }
     setTDLPage(currentTDLPage)
-
+    updateUI(false)
 });
 
 const isTaskSwitched = document.getElementById('task-bool');
@@ -274,6 +283,19 @@ containerArray.forEach((container, index) => {//For each item in both containers
                     }
                 });
             });
+        } else if (target.id.endsWith('-TDL-item-div')) {//Handles task clicks and sets modification state
+            TDLitemid = target.id.split("-")
+            TDLitemIDN = TDLitemid[0]
+            
+            task_list.forEach((list, index) => { //for each list in array
+                list.tasks.forEach(task => { //for each task in that list
+                    if (TDLitemIDN == task.id){
+                        selected = task
+                        console.log("Selected TDL task: " + selected)
+                        setModifyStateTask(task)
+                    }
+                });
+            });
         } else if (target.id.endsWith('tdiv')) { //Handles list clicks and sets modification state
             listitemid = target.id.split("-")
             listitemIDN = listitemid[0]
@@ -286,7 +308,30 @@ containerArray.forEach((container, index) => {//For each item in both containers
             });
 
 
+        } else if (target.id.endsWith('TDL-completed-checkbox')) {
+            //mark task completed AKA delete it unless it's recurring or persistent
+            listitemid = target.id.split("-")
+            listitemIDN = listitemid[0]
+            item = getItemById(listitemIDN)
+            var timer;
+            if (document.getElementById(target.id).checked == true) {
+                timer = setTimeout(DeleteItem,5000) 
+                function DeleteItem(){
+                    if (document.getElementById(target.id).checked == true) {
+                        removeTask(item.id, item.listid)
+                        updateUI(false)
+                    }
+                } 
+            }
+
+
+        } else if (target.id.endsWith('TDL-delete-btn')) { //Delete a recurring task when clicked
+            listitemid = target.id.split("-")
+            listitemIDN = listitemid[0]
+            item = getItemById(listitemIDN)
+            removeTask(item.id, item.listid)
+            updateUI(false)
         }
     });
-
+    
 });
