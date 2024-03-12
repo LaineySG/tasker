@@ -131,7 +131,8 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                 TDLElement.classList = "text-center w-full" 
                 
                 list.tasks.forEach(task => { //for each task in the to-do list, create div and content area.
-                    if ((task.date == ((new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) || (task.is_persistent && (task.date < (new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})))))) && !task.is_completed) {
+                    if ((task.date == new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) || (task.is_persistent && (task.date < new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) && !task.is_completed)) {
+                        
                         //If it's the same date or it's persistent from an older date, and not completed, it goes here.
                         const TDLItem = document.createElement('li');
 
