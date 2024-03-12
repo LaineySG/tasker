@@ -48,3 +48,53 @@ function clearStorage() {//Clears local storage to refresh list
     console.log("Cleared!")
     location.reload()
 }
+
+/**
+ * takes in a date, returns string representation as 'dd-mm-yy'
+ * @param {Date} date1 
+ */
+function getDateString(date) { //takes in a date, returns yyyy-mm-dd
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1; // month is zero-indexed
+    let dd = date.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    const formatted = yyyy + '-' + mm + '-' + dd;
+    return formatted
+}
+
+/**
+ * takes in 2 dates, returns 1 if date1 > date2, 0 if ==, -1 if date2 > date1
+ * @param {Date} date1 
+ * @param {Date} date2 
+ */
+function compareDateObjects(date1, date2) { 
+    const yyyy1 = date1.getFullYear();
+    let mm1 = date1.getMonth() + 1; // month is zero-based
+    let dd1 = date1.getDate();
+    const yyyy2 = date2.getFullYear();
+    let mm2 = date2.getMonth() + 1; // month is zero-based
+    let dd2 = date2.getDate();
+
+    if (yyyy1 > yyyy2) {
+        return 1
+    } else if (yyyy2 > yyyy1) {
+        return -1
+    } else { //they're equal year
+        if (mm1 > mm2) {
+            return 1
+        } else if (mm2 > mm1) {
+            return -1
+        } else {//they're equal month
+            if (dd1 > dd2) {
+                return 1
+            } else if (dd2 > dd1) {
+                return -1
+            } else { //all equal
+                return 0
+            }
+        }
+    }
+}

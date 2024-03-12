@@ -2,6 +2,8 @@ timer_time_in_seconds = 0 //global timer tracker
 
 function timerStart() { //Start the timer
     startTime = new Date();
+    alarm.load()
+    document.title = "Tasker"
     var timeRemaining = document.getElementById("timer").value; //Get the value the user has input
     timeRemainingArray = timeRemaining.split(":");
     mins = timeRemainingArray[0];
@@ -19,11 +21,14 @@ function timerPause() { //Stops/pauses the timer.
     clearTimeout(timerEnd);
     clearTimeout(timerInterval);
     console.log("timer stopped!");
+    alarm.pause()
 }
 
 function timeIsUp() { //Timer ends
     console.log("timer done!");
     timerPause();
+    document.title = "Beep beep!"
+    alarm.play()
 }
 
 function setTimeLeft(diff) { //Subtracts the diff from the timer's time. Run every second. Also tracks timerEnd.

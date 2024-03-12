@@ -22,6 +22,7 @@ if (window.localStorage.getItem("taskList")) {
 
 let selected = '' //selected ID
 let currentTDLPage = 0 //to-do-list page, defaults to "to-do-list"
+alarm = new Audio('data/Lastcall.mp3')
 
 updateUI() //to show loaded task_list info
 

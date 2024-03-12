@@ -131,11 +131,9 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                 TDLElement.classList = "text-center w-full" 
                 
                 list.tasks.forEach(task => { //for each task in the to-do list, create div and content area.
-                    if ((task.date == new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) || (task.is_persistent && (task.date < new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) && !task.is_completed)) {
-                        
+                    if (((task.date == new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) && !task.is_completed) || (task.is_persistent && (task.date < new Date().toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})) && !task.is_completed)) {
                         //If it's the same date or it's persistent from an older date, and not completed, it goes here.
                         const TDLItem = document.createElement('li');
-
                         TDLItem.title = `${task.name} (${task.priority}) - ${task.is_completed ?  ("Completed: " + task.completed_date) : ("Due "+task.date)}.` 
                         TDLItem.title += `${task.note}. ${task.is_recurring ? "recurring every: "+task.recur_days+" days." : ""} - ${task.is_persistent ? "Persistent" : ""} (${task.id})` //update for context menu on hover. Esp. comments
                         
@@ -266,8 +264,8 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                 TDLElement.classList = "text-center w-full" 
                 
                 list.tasks.forEach(task => { //for each task in the to-do list, create div and content area.
-                    if (task.is_recurring) {
-                        //If task recurs it goes here.
+                    if (task.is_recurring && (new Date(task.date)).toDateString() != (new Date()).toDateString() ) {
+                        //If task recurs and isn't for today it goes here.
                         const TDLItem = document.createElement('li');
 
                         TDLItem.title = `${task.name} (${task.priority}) - ${task.is_completed ?  ("Completed: " + task.completed_date) : ("Due "+task.date)}.` 
@@ -306,16 +304,24 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                             TDLItem.appendChild(persistentCircle);
 
                             
-                            nextDate = (new Date(task.date)).setDate((new Date(task.date)).getDate() + parseInt(task.recur_days)+1); //add 1 so it works
-                            if (nextDate > new Date().setDate((new Date(task.date)).getDate())) { //if date is after today
+                            nextDateRaw = new Date((new Date(task.date)).setDate((new Date(task.date)).getDate() + parseInt(task.recur_days)+1))
+                            currentDateRaw = new Date()
+                            if ((compareDateObjects(nextDateRaw,currentDateRaw)) > 0) { //if date is after today, we add it to the recurring list
+                                console.log("They are more: " + task.name)
                                 const TDLNextDate = document.createElement('span');
-                                TDLNextDate.classList = 'pointer-events-none mr-3 text-gray-500 font-normal italic'
-                                TDLNextDate.textContent = new Date(nextDate).toLocaleDateString("en-CA", {year:"numeric", month: "2-digit", day:"2-digit"})
+                                TDLNextDate.classList = 'pointer-events-none mr-3 text-gray-500 text-xs font-normal italic'
+                                TDLNextDate.textContent = getDateString(nextDateRaw)
                                 TDLItem.appendChild(TDLNextDate);
-                            } else { //otherwise date is today
-                                task.date = nextDate()
+                            } else if ((compareDateObjects(nextDateRaw,currentDateRaw) == 0)) { //If it is exactly today then it shouldn't appear in this list
+                                console.log("They are equal: " + task.name + "nd: " + getDateString(nextDateRaw) + " - cd: " + getDateString(currentDateRaw))
+                                //So do nothing
+                                task.date = getDateString(nextDateRaw)
                                 task.is_completed = false
-                                updateUI(false);
+                            } else { //Otherwise the date is less; now we recycle it by setting the date to the new date, setting completed to false, and finally re-doing the UI update.
+                                console.log("They are less: " + task.name)
+                                task.date = getDateString(nextDateRaw)
+                                task.is_completed = false
+                                //updateUI(false);
                             }
                         }
                         
