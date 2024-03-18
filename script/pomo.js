@@ -33,6 +33,7 @@ function timeIsUp() { //Timer ends
 
 function setTimeLeft(diff) { //Subtracts the diff from the timer's time. Run every second. Also tracks timerEnd.
     timer_time_in_seconds -= diff; // Subtract the difference from the remaining time
+    clearTimeout(timerEnd);
     timerEnd = setTimeout(timeIsUp, timer_time_in_seconds * 1000);
 }
 
@@ -40,5 +41,12 @@ function updateTimerDisplay() { //Update the timer display
     setTimeLeft(1); // Subtract 1 second in each update
     seconds = timer_time_in_seconds % 60;
     mins = Math.floor(timer_time_in_seconds / 60); // integer division
+    if (seconds < 10) {
+        seconds = "0" + seconds
+    }
+    if (mins < 10) {
+        mins = "0" + mins
+    }
     document.getElementById("timer").value = mins + ":" + seconds;
+    document.title = "Tasker (" + mins + ":" + seconds + ")";
 }

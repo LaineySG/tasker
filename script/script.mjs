@@ -217,15 +217,9 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                     
                         const TDLText = document.createElement('span');
                         TDLText.classList = 'pointer-events-none mr-3'
-                        TDLText.textContent = task.name + " - ";
+                        TDLText.textContent = task.name
                         TDLText.style.color = task.color;
                         TDLItem.appendChild(TDLText);
-                        
-                        
-                        const TDLTextDate = document.createElement('span');
-                        TDLTextDate.classList = 'pointer-events-none mr-3 text-gray-500 font-normal italic'
-                        TDLTextDate.textContent = task.date;
-                        TDLItem.appendChild(TDLTextDate);
                     
                         if (task.is_persistent) { //add persistence circle
                             const persistentCircle = document.createElement('div');
@@ -239,6 +233,12 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                             persistentCircle.classList += "bg-rose-400 text-xs w-5 pointer-events-none h-5 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"
                             TDLItem.appendChild(persistentCircle);
                         }
+                        
+                        
+                        const TDLTextDate = document.createElement('span');
+                        TDLTextDate.classList = 'pointer-events-none self-center mr-3 text-gray-500 text-center text-xs font-normal italic'
+                        TDLTextDate.textContent = task.date;
+                        TDLItem.appendChild(TDLTextDate);
 
                         const completedlabel = document.createElement('label') //add completed checkbox
                         const completedCheck = document.createElement('input')
@@ -271,7 +271,7 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                         TDLItem.title = `${task.name} (${task.priority}) - ${task.is_completed ?  ("Completed: " + task.completed_date) : ("Due "+task.date)}.` 
                         TDLItem.title += `${task.note}. ${task.is_recurring ? "recurring every: "+task.recur_days+" days." : ""} - ${task.is_persistent ? "Persistent" : ""} (${task.id})` //update for context menu on hover. Esp. comments
                         
-                        TDLItem.classList = "hover:border-2 hover:rounded-md hover:bg-pink-400 hover:border-pink-500 flex justify-center"; // Use flex container to align items horizontally
+                        TDLItem.classList = "hover:border-2 text-center hover:rounded-md hover:bg-pink-400 hover:border-pink-500 flex justify-center"; // Use flex container to align items horizontally
                         TDLItem.id = `${task.id}-TDL-item-div`
                         const priocircle = document.createElement('div');
                         priocircle.innerHTML = `<span>${task.priority}</span>`;
@@ -309,7 +309,7 @@ function updateUI(Listchange=true) { //Update the lists and tasks
                             if ((compareDateObjects(nextDateRaw,currentDateRaw)) > 0) { //if date is after today, we add it to the recurring list
                                 console.log("They are more: " + task.name)
                                 const TDLNextDate = document.createElement('span');
-                                TDLNextDate.classList = 'pointer-events-none mr-3 text-gray-500 text-xs font-normal italic'
+                                TDLNextDate.classList = 'pointer-events-none mr-3 self-center text-gray-500 text-xs text-center font-normal italic'
                                 TDLNextDate.textContent = getDateString(nextDateRaw)
                                 TDLItem.appendChild(TDLNextDate);
                             } else if ((compareDateObjects(nextDateRaw,currentDateRaw) == 0)) { //If it is exactly today then it shouldn't appear in this list
@@ -397,12 +397,15 @@ function updateUI(Listchange=true) { //Update the lists and tasks
     
         const priocircle = document.createElement('div');
         priocircle.innerHTML = `<span>${task.priority}</span>`;
-        if (task.priority > 7) {
-            priocircle.classList = "w-5 pointer-events-none h-5 bg-red-500 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"; // Add flex utilities for centering
+        if (task.priority == 11) {
+            priocircle.classList = "w-5 pointer-events-none h-5 bg-purple-500 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"; // Add flex utilities for centering
+        }
+        else if (task.priority > 7) {
+            priocircle.classList = "w-5 pointer-events-none h-5 bg-green-500 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"; // Add flex utilities for centering
         } else if (task.priority > 3) {
             priocircle.classList = "w-5 pointer-events-none h-5 bg-orange-500 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"; // Add mr-2 for margin-right
         } else {
-            priocircle.classList = "w-5 pointer-events-none h-5 bg-green-500 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"; // Add mr-2 for margin-right
+            priocircle.classList = "w-5 pointer-events-none h-5 bg-red-500 inline text-center rounded-full mr-2 flex justify-center items-center my-auto"; // Add mr-2 for margin-right
         }
         taskItem.appendChild(priocircle);
     
